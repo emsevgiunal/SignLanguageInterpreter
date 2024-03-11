@@ -1,6 +1,7 @@
 import joblib
 import leap
 import time
+import numpy as np
 
 model = joblib.load('sign_language_model.joblib')
 
@@ -26,7 +27,7 @@ def extract_features_from_frame(frame):
         
         # Combine hand features and finger features
         hand_features = [
-            hand_type, palm_position.x, palm_position.y, palm_position.z,
+            palm_position.x, palm_position.y, palm_position.z,
             palm_velocity.x, palm_velocity.y, palm_velocity.z,
             palm_normal.x, palm_normal.y, palm_normal.z
         ]
@@ -47,19 +48,17 @@ class RealTimePredictionListener(leap.Listener):
             print('On frame:', event.tracking_frame_id)
             print('hands:', event.hands)
         
-        # Assuming a function to extract features from a frame
+            # Assuming a function to extract features from a frame
             features = extract_features_from_frame(event)
+
+            features_array = np.array(features).reshape(1, -1)
+            prediction = model.predict(features_array)
+
 
             print(features)
         
-        # Preprocess features as needed (reshape, scale, etc.)
-        #preprocessed_features = preprocess_features(features)
-        
-        # Predict using your model
-        #prediction = model.predict(preprocessed_features)
-        
         # Use the prediction in your application
-        # print(f"Predicted gesture: {prediction}")
+            print(f"Predicted gesture: {prediction}")
 
 def main():
     # Setup Leap Motion controller and listener
