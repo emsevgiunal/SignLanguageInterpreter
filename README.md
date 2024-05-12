@@ -9,7 +9,7 @@
 
 
 
-#British Sign Language Interpreter Using Leap Motion and Machine Learning
+# British Sign Language Interpreter Using Leap Motion and Machine Learning
 
 In order to run this project the plugin needs to installed correctly, after that run the RandomForestClassier.py to train the model and then the SignLangInterface.py to run the program.
 
