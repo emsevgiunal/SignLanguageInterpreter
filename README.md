@@ -7,6 +7,13 @@
 [discord]: https://discord.com/invite/3VCndThqxS "Discord Server"
 [github-discussions]: https://github.com/ultraleap/leapc-python-bindings/discussions "Github Discussions"
 
+
+
+#British Sign Language Interpreter Using Leap Motion and Machine Learning
+
+In order to run this project the plugin needs to installed correctly, after that run the RandomForestClassier.py to train the model and then the SignLangInterface.py to run the program.
+
+This application uses the:
 <!--content-->
 # Gemini LeapC Python Bindings
 
