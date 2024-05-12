@@ -4,9 +4,11 @@ import time
 import numpy as np
 import pandas as pd
 import math
+from sklearn.preprocessing import MinMaxScaler
 
 
-model = joblib.load('sign_language_model.joblib')
+model = joblib.load('sign_language_model2.joblib')
+#scaler = joblib.load('scaler.joblib') 
 
 finger_names = ['thumb', 'index', 'middle', 'ring', 'pinky']
 bone_names = ['metacarpal', 'proximal', 'intermediate', 'distal']
@@ -14,12 +16,13 @@ positions = ['start', 'end', 'direction']
 labels = ['x', 'y', 'z']
 positions_names = {'start': 'next_joint', 'end': 'prev_joint', 'direction': 'rotation'}
 sizes = ['length', 'width']
+# scaler = MinMaxScaler()
 
 #print(dir(model))
 
 def calculate_length(prev_joint, next_joint):
     x_diff = next_joint.x - prev_joint.x
-    y_diff = next_joint.y - prev_joint.z
+    y_diff = next_joint.y - prev_joint.y
     z_diff = next_joint.z - prev_joint.z
 
     length = math.sqrt(x_diff**2 + y_diff**2 + z_diff**2)
@@ -94,33 +97,32 @@ def extract_features_from_frame(frame):
         features_dict[prefix + 'elbow_position_y'] = hand.arm.prev_joint.y
         features_dict[prefix + 'elbow_position_z'] = hand.arm.prev_joint.z
 
-        pitch =  math.atan2(hand.palm.direction.y, -hand.palm.direction.z) 
-        roll = math.atan2(hand.palm.normal.x, -hand.palm.normal.y)
-        yaw = math.atan2(hand.palm.direction.x, -hand.palm.direction.z)
+        # pitch =  math.atan2(hand.palm.direction.y, -hand.palm.direction.z) 
+        # roll = math.atan2(hand.palm.normal.x, -hand.palm.normal.y)
+        # yaw = math.atan2(hand.palm.direction.x, -hand.palm.direction.z)
 
 
-        features_dict[prefix + 'hand_pitch'] = math.degrees(pitch)
-        features_dict[prefix + 'hand_roll'] = math.degrees(roll)
-        features_dict[prefix + 'hand_yaw'] = math.degrees(yaw)
+        # features_dict[prefix + 'hand_pitch'] = math.degrees(pitch)
+        # features_dict[prefix + 'hand_roll'] = math.degrees(roll)
+        # features_dict[prefix + 'hand_yaw'] = math.degrees(yaw)
 
-        # features_dict[prefix + 'thumb_width'] = hand.digits[0].metacarpal.length
 
         
 
-        for finger_idx, finger in enumerate(finger_names):            
-                 key = f"{prefix}{finger}_width"
-                 features_dict[key] = hand.digits[finger_idx].intermediate.width
+        # for finger_idx, finger in enumerate(finger_names):            
+        #          key = f"{prefix}{finger}_width"
+        #          features_dict[key] = hand.digits[finger_idx].intermediate.width
 
 
-        for finger_idx, finger in enumerate(finger_names):
-            key = f"{prefix}{finger}_width"
-            prev_joint = hand.digits[finger_idx].proximal.prev_joint
+        # for finger_idx, finger in enumerate(finger_names):
+        #     key = f"{prefix}{finger}_width"
+        #     prev_joint = hand.digits[finger_idx].proximal.prev_joint
 
-            next_joint = hand.digits[finger_idx].distal.next_joint
+        #     next_joint = hand.digits[finger_idx].distal.next_joint
 
-            length =  calculate_length(prev_joint, next_joint)
+        #     length =  calculate_length(prev_joint, next_joint)
 
-            features_dict[key] = length
+        #     features_dict[key] = length
 
        
 
@@ -153,6 +155,9 @@ def extract_features_from_frame(frame):
         #print(features_df)
                 
         features_df = pd.DataFrame(features_dict, index=[0])
+        # scaled_features_df = scaler.fit_transform(features_df)
+        #scaled_features = scaler.fit_transform(features_df)  # Use transform, not fit_transform
+
 
         #print(features_df)
             
@@ -172,7 +177,7 @@ def generate_feature_keys(prefix):
                 'palm_normal_x', 'palm_normal_y', 'palm_normal_z',
                 'hand_direction_x', 'hand_direction_y', 'hand_direction_z',
                 'palm_velocity_x', 'palm_velocity_y', 'palm_velocity_z',
-                'hand_pitch', 'hand_roll', 'hand_yaw',
+                # 'hand_pitch', 'hand_roll', 'hand_yaw',
                 'arm_direction_x', 'arm_direction_y', 'arm_direction_z',
                 'wrist_position_x', 'wrist_position_y', 'wrist_position_z',
                 'elbow_position_x', 'elbow_position_y', 'elbow_position_z',
@@ -180,9 +185,9 @@ def generate_feature_keys(prefix):
                 ]
     
     for finger in finger_names:
-        for size in sizes:
-            key1 = f"{finger}_{size}"
-            features.append(key1)            
+        # for size in sizes:
+        #     key1 = f"{finger}_{size}"
+        #     features.append(key1)            
         for bone in bone_names:
             for position in positions:
                 for label in labels:
